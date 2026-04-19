@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Services/">
+    <Project Path="BookingService/BookingService.csproj" />
+    <Project Path="HotelService/HotelService.csproj" />
+    <Project Path="UserService/UserService.csproj" />
+    <Project Path="WalletService/WalletService.csproj" />
+  </Folder>
+  <Project Path="ApiGateway/ApiGateway.csproj" />
+  <Project Path="BuildingBlocks/BuildingBlocks.csproj" />
+  <Project Path="Infrastructure/Infrastructure.csproj" />
+  <Project Path="Shared/Shared.csproj" />
+</Solution>
