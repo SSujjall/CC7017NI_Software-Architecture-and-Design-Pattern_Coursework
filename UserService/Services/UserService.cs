@@ -1,6 +1,8 @@
+using UserService.Services.Interfaces;
+
 namespace UserService.Services;
 
-public class UserService
+public class UserService : IUserService
 {
     
 }
