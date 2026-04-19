@@ -1,6 +1,9 @@
+using Shared.GenericRepo;
+using UserService.Models;
+
 namespace UserService.Repositories.Interfaces;
 
-public class IUserRepository
+public interface IUserRepository : IGenericRepo<Users>
 {
     
 }

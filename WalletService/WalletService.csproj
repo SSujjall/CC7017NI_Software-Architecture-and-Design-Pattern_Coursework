@@ -16,4 +16,8 @@
       <Folder Include="Models\DTOs\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Shared\Shared.csproj" />
+    </ItemGroup>
+
 </Project>
