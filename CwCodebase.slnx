@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Services/">
     <Project Path="BookingService/BookingService.csproj" />
+    <Project Path="EmailService/EmailService.csproj" />
     <Project Path="HotelService/HotelService.csproj" />
     <Project Path="UserService/UserService.csproj" />
     <Project Path="WalletService/WalletService.csproj" />

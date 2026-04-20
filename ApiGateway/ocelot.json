@@ -34,6 +34,14 @@
       "DownstreamHostAndPorts": [
         { "Host": "localhost", "Port": 5004 }
       ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/email/{everything}",
+      "UpstreamPathTemplate": "/gateway/email/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 5005 }
+      ]
     }
   ]
 }
