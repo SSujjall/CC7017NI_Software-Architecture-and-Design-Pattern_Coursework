@@ -1,5 +1,7 @@
+using EmailService.Consumers;
 using EmailService.Models.Configs;
 using EmailService.Services.Interfaces;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,26 @@ builder.Services.AddSwaggerGen();
 #region Email Config binding
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
 builder.Services.AddSingleton(emailConfig);
+#endregion
+
+#region RabbitMQ Config
+builder.Services.AddMassTransit(opts =>
+{
+    opts.AddConsumer<UserRegisteredConsumer>();
+    opts.UsingRabbitMq((context, config) =>
+    {
+        config.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+        
+        config.ReceiveEndpoint("user-registered-queue", e =>
+        {
+            e.ConfigureConsumer<UserRegisteredConsumer>(context);
+        });
+    });
+});
 #endregion
 
 builder.Services.AddScoped<IEmailService, EmailService.Services.EmailService>();

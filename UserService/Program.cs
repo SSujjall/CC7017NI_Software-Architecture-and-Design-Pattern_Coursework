@@ -1,4 +1,5 @@
 using System.Text;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,14 +33,14 @@ builder.Services.AddDbContext<UserDbContext>(opts =>
 
 #region Identity Config
 builder.Services.AddIdentityCore<Users>(opts =>
-{
-    opts.SignIn.RequireConfirmedAccount = false;
-    opts.Password.RequireDigit = false;
-    opts.Password.RequiredLength = 6;
-    opts.Password.RequireNonAlphanumeric = false;
-    opts.Password.RequireUppercase = false;
-    opts.Password.RequireLowercase = false;
-})
+    {
+        opts.SignIn.RequireConfirmedAccount = false;
+        opts.Password.RequireDigit = false;
+        opts.Password.RequiredLength = 6;
+        opts.Password.RequireNonAlphanumeric = false;
+        opts.Password.RequireUppercase = false;
+        opts.Password.RequireLowercase = false;
+    })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<UserDbContext>()
     .AddDefaultTokenProviders();
@@ -47,10 +48,10 @@ builder.Services.AddIdentityCore<Users>(opts =>
 
 #region Register JWT Auth
 builder.Services.AddAuthentication(opts =>
-{
-    opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
+    {
+        opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(opts =>
     {
         opts.SaveToken = true;
@@ -115,6 +116,19 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JWT"));
 #endregion
 
+#region RabbitMQ Config
+builder.Services.AddMassTransit(opts =>
+{
+    opts.UsingRabbitMq((context, config) =>
+    {
+        config.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+    });
+});
+#endregion
 
 var app = builder.Build();
 

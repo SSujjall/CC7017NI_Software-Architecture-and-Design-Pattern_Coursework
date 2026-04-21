@@ -1,7 +1,9 @@
 using System.Net;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Shared.Models;
 using Shared.Models.Enums;
+using Shared.Models.Events;
 using UserService.Helpers;
 using UserService.Models;
 using UserService.Models.DTOs;
@@ -13,7 +15,8 @@ namespace UserService.Services;
 public class AuthService(
     UserManager<Users> _userMgr,
     IUserRepository _userRepo,
-    ITokenService _tokenService
+    ITokenService _tokenService,
+    IPublishEndpoint _publishEndpoint
 ) : IAuthService
 {
     public async Task<ApiResponse<RegisterResponseDTO>> Register(RegisterDTO dto)
@@ -47,10 +50,21 @@ public class AuthService(
             );
             throw new ServiceException(errors, HttpStatusCode.Conflict);
         }
+
+        var emailConfirmationToken = await _userMgr.GenerateEmailConfirmationTokenAsync(userModel);
+
+        #region publish message for email
+        await _publishEndpoint.Publish(new UserRegisteredEvent
+        {
+            Email = userModel.Email,
+            Username = userModel.UserName,
+            EmailConfirmationToken = emailConfirmationToken
+        });
+        #endregion
         
         var response = new RegisterResponseDTO()
         {
-            EmailConfirmToken = await _userMgr.GenerateEmailConfirmationTokenAsync(userModel),
+            EmailConfirmToken = emailConfirmationToken
         };
         return ApiResponse<RegisterResponseDTO>.Success(response, "User created successfully");
     }
