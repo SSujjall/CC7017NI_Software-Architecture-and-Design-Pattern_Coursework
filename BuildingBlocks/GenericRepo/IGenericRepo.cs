@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace Shared.GenericRepo;
+namespace BuildingBlocks.GenericRepo;
 
 public interface IGenericRepo<T> where T : class
 {

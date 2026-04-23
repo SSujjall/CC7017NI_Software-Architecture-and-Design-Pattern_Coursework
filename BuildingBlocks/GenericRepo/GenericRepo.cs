@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
-namespace Shared.GenericRepo;
+namespace BuildingBlocks.GenericRepo;
 
 public class GenericRepo<T> : IGenericRepo<T> where T : class
 {

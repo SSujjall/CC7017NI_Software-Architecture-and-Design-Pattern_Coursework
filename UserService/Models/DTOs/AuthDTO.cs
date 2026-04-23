@@ -16,6 +16,13 @@ public class RegisterDTO
     public string Password { get; set; }
 }
 
+public class ConfirmEmailDTO
+{
+    [EmailAddress]
+    public string Email { get; set; }
+    public string Token { get; set; }
+}
+
 public class RegisterResponseDTO
 {
     public string EmailConfirmToken { get; set; } // This is just for local development, will remove later

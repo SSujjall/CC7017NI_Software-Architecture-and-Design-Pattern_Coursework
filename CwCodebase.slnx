@@ -8,6 +8,4 @@
   </Folder>
   <Project Path="ApiGateway/ApiGateway.csproj" />
   <Project Path="BuildingBlocks/BuildingBlocks.csproj" />
-  <Project Path="Infrastructure/Infrastructure.csproj" />
-  <Project Path="Shared/Shared.csproj" />
 </Solution>

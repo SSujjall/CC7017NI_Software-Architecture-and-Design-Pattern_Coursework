@@ -1,6 +1,6 @@
+using BuildingBlocks.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Shared.Models.Enums;
 using UserService.Models;
 
 namespace UserService.Helpers;

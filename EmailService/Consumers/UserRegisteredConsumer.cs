@@ -1,8 +1,7 @@
+using BuildingBlocks.Events;
 using EmailService.Models;
 using EmailService.Services.Interfaces;
 using MassTransit;
-using MimeKit;
-using Shared.Models.Events;
 
 namespace EmailService.Consumers;
 
@@ -21,7 +20,7 @@ public class UserRegisteredConsumer : IConsumer<UserRegisteredEvent>
         var emailMessage = new EmailMessage(
             new[] {message.Email}, 
             "Please confirm your email", 
-            $"Hello {message.Username}, Please confirm your account with the following link: \n {message.EmailConfirmationToken}"
+            $"Hello {message.Username}, Please confirm your account with the following link: \n {message.EmailConfirmationLink}"
         );
         await _emailService.SendEmailAsync(emailMessage);
     }

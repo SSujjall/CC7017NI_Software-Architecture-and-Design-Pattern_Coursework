@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Shared.Models;
+namespace BuildingBlocks.Models;
 
 public class ApiResponse<T>
 {

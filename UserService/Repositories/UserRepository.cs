@@ -1,5 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using Shared.GenericRepo;
+using BuildingBlocks.GenericRepo;
 using UserService.Data;
 using UserService.Models;
 using UserService.Repositories.Interfaces;

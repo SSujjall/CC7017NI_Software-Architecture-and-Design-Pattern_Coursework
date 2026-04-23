@@ -1,9 +1,11 @@
 using System.Net;
+using System.Text;
+using BuildingBlocks.Events;
+using BuildingBlocks.Models;
+using BuildingBlocks.Models.Enums;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
-using Shared.Models;
-using Shared.Models.Enums;
-using Shared.Models.Events;
+using Microsoft.AspNetCore.WebUtilities;
 using UserService.Helpers;
 using UserService.Models;
 using UserService.Models.DTOs;
@@ -36,14 +38,14 @@ public class AuthService(
             );
             throw new ServiceException(errors, HttpStatusCode.Conflict);
         }
-        
+
         // Add user to the 'User' role
         var addToRoleResult = await _userMgr.AddToRoleAsync(userModel, UserRoles.User.ToString());
         if (!addToRoleResult.Succeeded)
         {
             // COMPENSATION STEP ; kind of like a transactoon rollback (rollback user creation)
             await _userMgr.DeleteAsync(userModel);
-            
+
             var errors = addToRoleResult.Errors.ToDictionary(
                 e => e.Code,
                 e => e.Description
@@ -52,23 +54,23 @@ public class AuthService(
         }
 
         var emailConfirmationToken = await _userMgr.GenerateEmailConfirmationTokenAsync(userModel);
-
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken));
         #region publish message for email
         await _publishEndpoint.Publish(new UserRegisteredEvent
         {
             Email = userModel.Email,
             Username = userModel.UserName,
-            EmailConfirmationToken = emailConfirmationToken
+            EmailConfirmationLink = $"https://localhost:5000/gateway/auth/confirm-email?email={userModel.Email}&token={encodedToken}"
         });
         #endregion
-        
+
         var response = new RegisterResponseDTO()
         {
             EmailConfirmToken = emailConfirmationToken
         };
         return ApiResponse<RegisterResponseDTO>.Success(response, "User created successfully");
     }
-    
+
     public async Task<ApiResponse<LoginResponseDTO>> Login(LoginDTO dto)
     {
         var user = await _userMgr.FindByEmailAsync(dto.Email);
@@ -76,11 +78,11 @@ public class AuthService(
         {
             return InvalidLoginResponse();
         }
-        // if (user.EmailConfirmed == false)
-        // {
-        //     var errors = new Dictionary<string, string> { { "UnverifiedEmail", "Email is not verified. Please verify email first and try again" } };
-        //     return ApiResponse<LoginResponseDTO>.Failed(errors, "Login failed", HttpStatusCode.Unauthorized);
-        // }
+        if (user.EmailConfirmed == false)
+        {
+            var errors = new Dictionary<string, string> { { "UnverifiedEmail", "Email is not verified. Please verify email first and try again" } };
+            return ApiResponse<LoginResponseDTO>.Failed(errors, "Login failed", HttpStatusCode.Unauthorized);
+        }
 
         var isPasswordCorrect = await _userMgr.CheckPasswordAsync(user, dto.Password);
         if (isPasswordCorrect == false)
@@ -94,7 +96,35 @@ public class AuthService(
         };
         return ApiResponse<LoginResponseDTO>.Success(response, "User validated successfully");
     }
-    
+
+    public async Task<ApiResponse<string>> ConfirmEmail(ConfirmEmailDTO dto)
+    {
+        var user = await _userMgr.FindByEmailAsync(dto.Email);
+        if (user == null)
+        {
+            throw new ServiceException(
+                new Dictionary<string, string> { { "UserNotFound", "No user found" } },
+                HttpStatusCode.NoContent
+            );
+        }
+        if (user.EmailConfirmed == true)
+        {
+            throw new ServiceException(
+                new Dictionary<string, string> { { "EmailALreadyConfirmed", "Email for this user is already confirmed" } },
+                HttpStatusCode.Conflict
+            );
+        }
+        var result = await _userMgr.ConfirmEmailAsync(user, dto.Token);
+        if (!result.Succeeded)
+        {
+            throw new ServiceException(
+                result.Errors.ToDictionary(x => x.Code, x => x.Description),
+                HttpStatusCode.NoContent
+            );
+        }
+        return ApiResponse<string>.Success("Email confirmed successfully", "User confirmed successfully");
+    }
+
     private ApiResponse<LoginResponseDTO> InvalidLoginResponse()
     {
         var errors = new Dictionary<string, string>

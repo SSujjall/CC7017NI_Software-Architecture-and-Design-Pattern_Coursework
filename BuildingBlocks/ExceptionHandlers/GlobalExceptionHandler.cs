@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
-using Shared.Models;
+using BuildingBlocks.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace UserService.Helpers;
 

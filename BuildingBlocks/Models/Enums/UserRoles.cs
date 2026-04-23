@@ -1,4 +1,4 @@
-namespace Shared.Models.Enums;
+namespace BuildingBlocks.Models.Enums;
 
 public enum UserRoles
 {

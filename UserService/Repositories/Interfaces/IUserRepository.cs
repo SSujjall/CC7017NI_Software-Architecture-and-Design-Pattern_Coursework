@@ -1,4 +1,4 @@
-using Shared.GenericRepo;
+using BuildingBlocks.GenericRepo;
 using UserService.Models;
 
 namespace UserService.Repositories.Interfaces;
