@@ -6,44 +6,49 @@ namespace BuildingBlocks.GenericRepo;
 public class GenericRepo<T> : IGenericRepo<T> where T : class
 {
     private readonly DbContext _context;
+    private readonly DbSet<T> _dbSet;
 
     public GenericRepo(DbContext context)
     {
         _context = context;
+        _dbSet = _context.Set<T>();
     }
     
-    public Task<T> AddAsync(T entity)
+    public async Task<T> AddAsync(T entity)
     {
-        throw new NotImplementedException();
+        var result = await _dbSet.AddAsync(entity);
+        return result.Entity;
     }
 
     public Task<T> UpdateAsync(T entity)
     {
-        throw new NotImplementedException();
+        var result = _dbSet.Update(entity);
+        return Task.FromResult(result.Entity);
     }
 
-    public Task<IEnumerable<T>> GetAllAsync()
+    public async Task<IEnumerable<T>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var result = await _dbSet.ToListAsync();
+        return result;
     }
 
-    public Task<T> GetByIdAsync(object entityId)
+    public async Task<T?> GetByIdAsync(object entityId)
     {
-        throw new NotImplementedException();
+        return await _dbSet.FindAsync(entityId);
     }
 
-    public Task<IEnumerable<T>> FindAllByConditionAsync(Expression<Func<T, bool>> expression)
+    public async Task<IEnumerable<T>> FindAllByConditionAsync(Expression<Func<T, bool>> expression)
     {
-        throw new NotImplementedException();
+        return await _dbSet.Where(expression).ToListAsync();
     }
 
-    public Task<T> FindSingleByConditionAsync(Expression<Func<T, bool>> expression)
+    public async Task<T> FindSingleByConditionAsync(Expression<Func<T, bool>> expression)
     {
-        throw new NotImplementedException();
+        return await _dbSet.FirstOrDefaultAsync(expression);
     }
 
-    public Task SaveChangesAsync()
+    public async Task SaveChangesAsync()
     {
-        throw new NotImplementedException();
+        await _context.SaveChangesAsync();
     }
 }
