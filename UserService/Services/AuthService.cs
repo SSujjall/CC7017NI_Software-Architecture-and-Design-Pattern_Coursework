@@ -58,6 +58,7 @@ public class AuthService(
         #region publish message for email
         await _publishEndpoint.Publish(new UserRegisteredEvent
         {
+            UserId = userModel.Id,
             Email = userModel.Email,
             Username = userModel.UserName,
             EmailConfirmationLink = $"https://localhost:5000/gateway/auth/confirm-email?email={userModel.Email}&token={encodedToken}"

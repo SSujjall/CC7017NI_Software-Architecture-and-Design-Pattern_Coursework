@@ -26,7 +26,7 @@ namespace HotelService.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [Authorize(Roles = "Superadmin,Admin")]
+        [Authorize(Roles = "Superadmin")] // only superadmin gets to add hotel, this makes it so that there is only 1 hotel owner
         [HttpPost("add-hotel")]
         public async Task<IActionResult> AddHotel(AddHotelDTO model)
         {

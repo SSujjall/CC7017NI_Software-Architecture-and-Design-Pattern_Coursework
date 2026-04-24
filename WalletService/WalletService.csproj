@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="MassTransit" Version="8.0.16" />
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.16" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.26" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.26" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.26">
           <PrivateAssets>all</PrivateAssets>
@@ -20,7 +21,6 @@
 
     <ItemGroup>
       <Folder Include="Controllers\" />
-      <Folder Include="Models\DTOs\" />
     </ItemGroup>
 
     <ItemGroup>

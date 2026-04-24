@@ -1,6 +1,9 @@
+using BuildingBlocks.GenericRepo;
+using WalletService.Models;
+
 namespace WalletService.Repositories.Interfaces;
 
-public class IWalletRepository
+public interface IWalletRepository : IGenericRepo<Wallets>
 {
     
 }

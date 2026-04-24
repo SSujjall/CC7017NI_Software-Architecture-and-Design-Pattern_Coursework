@@ -1,22 +1,39 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WalletService.Models.DTOs;
+using WalletService.Services.Interfaces;
 
 namespace WalletService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WalletController : ControllerBase
+    public class WalletController(
+        IWalletService _walletService
+    ) : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Get()
+        [Authorize(Roles = "Superadmin")]
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAllWallets()
         {
-            return Ok("Wallet");
+            var result = await _walletService.GetAllWallets();
+            return StatusCode((int)result.StatusCode, result);
         }
-
-        [HttpPost("test-post")]
-        public IActionResult Post()
+        
+        [Authorize]
+        [HttpGet("get-by-id/{id}")]
+        public async Task<IActionResult> GetWalletById(int id)
         {
-            return Ok("Wallet post working");
+            var result = await _walletService.GetWalletByUserId(id);
+            return StatusCode((int)result.StatusCode, result);
+        }
+        
+        [Authorize(Roles = "Superadmin")]
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateWallet(CreateWalletDTO dto)
+        {
+            var result = await _walletService.CreateWallet(dto);
+            return StatusCode((int)result.StatusCode, result);
         }
     }
 }
