@@ -1,6 +1,7 @@
 namespace HotelService.Models.DTOs;
 
-public class HotelDTO
+public class AddHotelDTO
 {
-    
+    public string Name { get; set; }
+    public string Location { get; set; }
 }

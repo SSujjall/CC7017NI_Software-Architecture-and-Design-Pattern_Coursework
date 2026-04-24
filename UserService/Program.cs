@@ -24,7 +24,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthorization();
 
-#region MSSQL Config
+#region MSSQL DB Config
 builder.Services.AddDbContext<UserDbContext>(opts =>
 {
     opts.UseSqlServer(builder.Configuration.GetConnectionString("UserDb"));
@@ -48,10 +48,10 @@ builder.Services.AddIdentityCore<Users>(opts =>
 
 #region Register JWT Auth
 builder.Services.AddAuthentication(opts =>
-    {
-        opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+{
+    opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
     .AddJwtBearer(opts =>
     {
         opts.SaveToken = true;
