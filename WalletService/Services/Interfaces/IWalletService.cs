@@ -8,6 +8,7 @@ public interface IWalletService
 {
     Task<ApiResponse<IEnumerable<Wallets>>> GetAllWallets();
     // Task<ApiResponse<Wallets>> GetWalletByWalletId(int id);
-    Task<ApiResponse<Wallets>> GetWalletByUserId(int walletId);
+    Task<ApiResponse<Wallets>> GetWalletById(string userId, int walletId);
     Task<ApiResponse<Wallets>> CreateWallet(CreateWalletDTO dto);
+    Task<ApiResponse<Wallets>> AddMoneyInWallet(string userId, LoadMoneyDTO dto);
 }

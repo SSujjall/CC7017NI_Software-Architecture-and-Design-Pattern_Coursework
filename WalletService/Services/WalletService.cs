@@ -17,13 +17,16 @@ public class WalletService(
         return ApiResponse<IEnumerable<Wallets>>.Success(wallets, "Wallets fetched");
     }
 
-    public async Task<ApiResponse<Wallets>> GetWalletByUserId(int walletId)
+    public async Task<ApiResponse<Wallets>> GetWalletById(string userId, int walletId)
     {
-        var wallet = await _walletRepo.GetByIdAsync(walletId);
+        var wallet = await _walletRepo.FindSingleByConditionAsync(
+            x => x.Id == walletId && x.UserId == userId
+        );
         if (wallet == null)
         {
             return ApiResponse<Wallets>.Success(null, "No wallets found", HttpStatusCode.NoContent);
         }
+
         return ApiResponse<Wallets>.Success(wallet, "Wallets fetched");
     }
 
@@ -37,5 +40,17 @@ public class WalletService(
         var createWalletResult = await _walletRepo.AddAsync(walletModel);
         await _walletRepo.SaveChangesAsync();
         return ApiResponse<Wallets>.Success(createWalletResult, "Wallet created", HttpStatusCode.Created);
+    }
+
+    public async Task<ApiResponse<Wallets>> AddMoneyInWallet(string userId, LoadMoneyDTO dto)
+    {
+        var wallet = await _walletRepo.FindSingleByConditionAsync(x => x.UserId == userId
+        );
+
+        wallet.Balance += dto.Balance; // add the balance
+
+        var updatedWallet = await _walletRepo.UpdateAsync(wallet);
+        await _walletRepo.SaveChangesAsync();
+        return ApiResponse<Wallets>.Success(updatedWallet, "Wallet updated", HttpStatusCode.Accepted);
     }
 }

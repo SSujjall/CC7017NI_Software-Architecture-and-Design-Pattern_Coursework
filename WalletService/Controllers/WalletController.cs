@@ -1,6 +1,7 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using UserService.Helpers;
 using WalletService.Models.DTOs;
 using WalletService.Services.Interfaces;
 
@@ -19,21 +20,44 @@ namespace WalletService.Controllers
             var result = await _walletService.GetAllWallets();
             return StatusCode((int)result.StatusCode, result);
         }
-        
+
         [Authorize]
-        [HttpGet("get-by-id/{id}")]
-        public async Task<IActionResult> GetWalletById(int id)
+        [HttpGet("get-by-id/{walletId}")]
+        public async Task<IActionResult> GetWalletById(int walletId)
         {
-            var result = await _walletService.GetWalletByUserId(id);
-            return StatusCode((int)result.StatusCode, result);
+            var userId = GetUserId();
+            var result = await _walletService.GetWalletById(userId, walletId);
+            return Ok(result);
         }
-        
+
         [Authorize(Roles = "Superadmin")]
         [HttpPost("create")]
         public async Task<IActionResult> CreateWallet(CreateWalletDTO dto)
         {
             var result = await _walletService.CreateWallet(dto);
             return StatusCode((int)result.StatusCode, result);
+        }
+
+        [Authorize]
+        [HttpPost("load-money")]
+        public async Task<IActionResult> LoadMoney(LoadMoneyDTO dto)
+        {
+            var userId = GetUserId();
+            var result = await _walletService.AddMoneyInWallet(userId, dto);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        private string GetUserId()
+        {
+            var userId = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ServiceException(
+                    new() { { "Unauthorized", "User not authorized" } },
+                    HttpStatusCode.Unauthorized
+                );
+            }
+            return userId;
         }
     }
 }
