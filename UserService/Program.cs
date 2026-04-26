@@ -110,6 +110,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService.Services.UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<StartupSeeder>();
 #endregion
 
 #region Hook JwtConfig values from appsettings
@@ -131,6 +132,12 @@ builder.Services.AddMassTransit(opts =>
 #endregion
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<StartupSeeder>();
+    await seeder.SeedAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

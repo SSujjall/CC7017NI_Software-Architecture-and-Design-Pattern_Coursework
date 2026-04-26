@@ -20,6 +20,14 @@
       ]
     },
     {
+      "DownstreamPathTemplate": "/api/room/{everything}",
+      "UpstreamPathTemplate": "/gateway/room/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 5002 }
+      ]
+    },
+    {
       "DownstreamPathTemplate": "/api/user/{everything}",
       "UpstreamPathTemplate": "/gateway/user/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST" ],

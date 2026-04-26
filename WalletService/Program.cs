@@ -119,6 +119,7 @@ builder.Services.AddAuthentication(opts =>
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<UserRegisteredConsumer>();
+    x.AddConsumer<BookingCreatedConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -127,6 +128,11 @@ builder.Services.AddMassTransit(x =>
         cfg.ReceiveEndpoint("wallet-user-created-queue", e =>
         {
             e.ConfigureConsumer<UserRegisteredConsumer>(context);
+        });
+
+        cfg.ReceiveEndpoint("wallet-booking-created-queue", e =>
+        {
+            e.ConfigureConsumer<BookingCreatedConsumer>(context);
         });
     });
 });

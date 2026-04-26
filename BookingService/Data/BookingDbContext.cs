@@ -1,6 +1,13 @@
+using BookingService.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace BookingService.Data;
 
-public class BookingDbContext
+public class BookingDbContext : DbContext
 {
-    
+    public BookingDbContext(DbContextOptions<BookingDbContext> options) : base(options)
+    {
+    }
+
+    public DbSet<Bookings> Bookings { get; set; }
 }

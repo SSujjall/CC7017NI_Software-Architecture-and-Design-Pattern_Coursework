@@ -1,6 +1,10 @@
+using BookingService.Models;
+using BookingService.Models.DTOs;
+using BuildingBlocks.Models;
+
 namespace BookingService.Services.Interfaces;
 
-public class IBookingService
+public interface IBookingService
 {
-    
+    Task<ApiResponse<Bookings>> CreateBooking(string userId, CreateBookingDTO dto);
 }

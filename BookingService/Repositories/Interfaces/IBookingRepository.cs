@@ -1,6 +1,9 @@
+using BookingService.Models;
+using BuildingBlocks.GenericRepo;
+
 namespace BookingService.Repositories.Interfaces;
 
-public class IBookingRepository
+public interface IBookingRepository : IGenericRepo<Bookings>
 {
     
 }

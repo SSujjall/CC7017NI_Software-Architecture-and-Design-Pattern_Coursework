@@ -9,5 +9,7 @@ public class WalletDbContext : DbContext
     {
     }
     
+    
+    
     public DbSet<Wallets> Wallets { get; set; }
 }

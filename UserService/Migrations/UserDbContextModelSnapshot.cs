@@ -51,22 +51,22 @@ namespace UserService.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d3e63e24-e4ca-4fc4-ab24-b175fefd0fae",
-                            ConcurrencyStamp = "d3e63e24-e4ca-4fc4-ab24-b175fefd0fae",
+                            Id = "c91c46a1-a78b-46c3-82b0-60f44b98e729",
+                            ConcurrencyStamp = "c91c46a1-a78b-46c3-82b0-60f44b98e729",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "a96ed403-4d1f-4edf-8ea3-cc2ce6929bde",
-                            ConcurrencyStamp = "a96ed403-4d1f-4edf-8ea3-cc2ce6929bde",
+                            Id = "0ca9761b-9943-42e6-873c-a5c06f260acf",
+                            ConcurrencyStamp = "0ca9761b-9943-42e6-873c-a5c06f260acf",
                             Name = "Superadmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
-                            Id = "3b219e1e-ad74-4b10-a9a9-508a73ae5e58",
-                            ConcurrencyStamp = "3b219e1e-ad74-4b10-a9a9-508a73ae5e58",
+                            Id = "d0fd8c45-dbbe-458c-92e7-66cd6ce8f3c8",
+                            ConcurrencyStamp = "d0fd8c45-dbbe-458c-92e7-66cd6ce8f3c8",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -235,8 +235,8 @@ namespace UserService.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "8e9ccc72-63cd-4bb4-9bac-5653a644c61c",
-                            RoleId = "a96ed403-4d1f-4edf-8ea3-cc2ce6929bde"
+                            UserId = "9fd52458-21e8-4f22-8390-daf5ca7787f5",
+                            RoleId = "0ca9761b-9943-42e6-873c-a5c06f260acf"
                         });
                 });
 
@@ -268,17 +268,17 @@ namespace UserService.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8e9ccc72-63cd-4bb4-9bac-5653a644c61c",
+                            Id = "9fd52458-21e8-4f22-8390-daf5ca7787f5",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3c78677f-ce75-425a-acf3-04a25e0d1eac",
-                            Email = "superadmin@blog.com",
+                            ConcurrencyStamp = "852885ca-561e-452a-bab9-f2e5d82804a6",
+                            Email = "superadmin@cw.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "SUPERADMIN@BLOG.COM",
+                            NormalizedEmail = "SUPERADMIN@CW.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAELMXBIn9jhZyA9qUJ+c2ee8ipXma62XY1QWpkH25+BSMbJK+UHlVptPozN3St0+FSA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIE1xKcIQxfx4eE9hKHY/V+sJZsl2kxnGem/2DDQvZ/rNwjOPuSSu5+DR9AbBxyjNA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bf59aaf8-c8d2-4245-b76e-b94bdca1582d",
+                            SecurityStamp = "2f6778ae-e745-4fde-bb14-c5972aaaacf4",
                             TwoFactorEnabled = false,
                             UserName = "Superadmin"
                         });

@@ -5,6 +5,7 @@ using BuildingBlocks.Models;
 using HotelService.Data;
 using HotelService.Repositories;
 using HotelService.Repositories.Interfaces;
+using HotelService.Services;
 using HotelService.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +57,11 @@ builder.Services.AddDbContext<HotelDbContext>(opts =>
 #region Register Services
 builder.Services.AddScoped<IHotelService, HotelService.Services.HotelService>();
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 #endregion
+
+builder.Services.AddAuthorization();
 
 #region JWT config
 builder.Services.AddAuthentication(opts =>
@@ -114,8 +119,6 @@ builder.Services.AddAuthentication(opts =>
         };
     });
 #endregion
-
-builder.Services.AddAuthorization();
 
 var app = builder.Build();
 

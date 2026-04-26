@@ -11,4 +11,6 @@ public interface IWalletService
     Task<ApiResponse<Wallets>> GetWalletById(string userId, int walletId);
     Task<ApiResponse<Wallets>> CreateWallet(CreateWalletDTO dto);
     Task<ApiResponse<Wallets>> AddMoneyInWallet(string userId, LoadMoneyDTO dto);
+    Task<ApiResponse<Wallets>> DeductBalance(string userId, decimal amount);
+    Task<ApiResponse<Wallets>> AddBalance(string userId, decimal amount);
 }

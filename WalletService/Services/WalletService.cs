@@ -19,8 +19,7 @@ public class WalletService(
 
     public async Task<ApiResponse<Wallets>> GetWalletById(string userId, int walletId)
     {
-        var wallet = await _walletRepo.FindSingleByConditionAsync(
-            x => x.Id == walletId && x.UserId == userId
+        var wallet = await _walletRepo.FindSingleByConditionAsync(x => x.Id == walletId && x.UserId == userId
         );
         if (wallet == null)
         {
@@ -37,6 +36,17 @@ public class WalletService(
             UserId = dto.UserId,
             Balance = dto.Balance,
         };
+        var existingWallet = await _walletRepo.FindSingleByConditionAsync(x => x.UserId == walletModel.UserId
+        );
+        if (existingWallet != null)
+        {
+            return ApiResponse<Wallets>.Failed(
+                new Dictionary<string, string>()
+                    { { "WalletAlreadyExists", "This user already has an existing wallet" } },
+                "Wallet already exists",
+                HttpStatusCode.Conflict
+            );
+        }
         var createWalletResult = await _walletRepo.AddAsync(walletModel);
         await _walletRepo.SaveChangesAsync();
         return ApiResponse<Wallets>.Success(createWalletResult, "Wallet created", HttpStatusCode.Created);
@@ -44,7 +54,8 @@ public class WalletService(
 
     public async Task<ApiResponse<Wallets>> AddMoneyInWallet(string userId, LoadMoneyDTO dto)
     {
-        var wallet = await _walletRepo.FindSingleByConditionAsync(x => x.UserId == userId
+        var wallet = await _walletRepo.FindSingleByConditionAsync(
+            x => x.UserId == userId
         );
 
         wallet.Balance += dto.Balance; // add the balance
@@ -52,5 +63,52 @@ public class WalletService(
         var updatedWallet = await _walletRepo.UpdateAsync(wallet);
         await _walletRepo.SaveChangesAsync();
         return ApiResponse<Wallets>.Success(updatedWallet, "Wallet updated", HttpStatusCode.Accepted);
+    }
+
+    public async Task<ApiResponse<Wallets>> DeductBalance(string userId, decimal amount)
+    {
+        var wallet = await _walletRepo.FindSingleByConditionAsync(x => x.UserId == userId);
+        if (wallet == null)
+        {
+            return ApiResponse<Wallets>.Failed(
+                new Dictionary<string, string> { { "Wallet", "Wallet not found" } },
+                "Payment failed",
+                HttpStatusCode.NotFound
+            );
+        }
+
+        if (wallet.Balance < amount)
+        {
+            return ApiResponse<Wallets>.Failed(
+                new Dictionary<string, string> { { "Wallet", "Insufficient balance" } },
+                "Payment failed",
+                HttpStatusCode.BadRequest
+            );
+        }
+
+        wallet.Balance -= amount;
+        await _walletRepo.UpdateAsync(wallet);
+        await _walletRepo.SaveChangesAsync();
+
+        return ApiResponse<Wallets>.Success(wallet, "Payment successful");
+    }
+
+    public async Task<ApiResponse<Wallets>> AddBalance(string userId, decimal amount)
+    {
+        var wallet = await _walletRepo.FindSingleByConditionAsync(x => x.UserId == userId);
+        if (wallet == null)
+        {
+            return ApiResponse<Wallets>.Failed(
+                new Dictionary<string, string> { { "Wallet", "Wallet not found" } },
+                "Transfer failed",
+                HttpStatusCode.NotFound
+            );
+        }
+
+        wallet.Balance += amount;
+        await _walletRepo.UpdateAsync(wallet);
+        await _walletRepo.SaveChangesAsync();
+
+        return ApiResponse<Wallets>.Success(wallet, "Balance added");
     }
 }

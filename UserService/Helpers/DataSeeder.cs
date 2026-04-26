@@ -46,9 +46,9 @@ public class DataSeeder
         var adminUser = new Users()
         {
             Id = superadminUserId,
-            Email = "superadmin@blog.com",
+            Email = "superadmin@cw.com",
             UserName = "Superadmin",
-            NormalizedEmail = "SUPERADMIN@BLOG.COM",
+            NormalizedEmail = "SUPERADMIN@CW.COM",
             NormalizedUserName = "SUPERADMIN",
             EmailConfirmed = true,
             SecurityStamp = Guid.NewGuid().ToString("D"),
