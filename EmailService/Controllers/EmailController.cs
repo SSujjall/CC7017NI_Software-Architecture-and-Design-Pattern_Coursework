@@ -2,7 +2,6 @@ using EmailService.Models;
 using EmailService.Models.DTOs;
 using EmailService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace EmailService.Controllers
 {

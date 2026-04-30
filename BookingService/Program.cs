@@ -151,7 +151,7 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", "/", h => { });
+        cfg.Host(builder.Configuration["RabbitMQ:Host"] ?? "localhost", "/", h => { });
 
         cfg.ReceiveEndpoint("booking-payment-success-queue", e =>
         {
@@ -169,6 +169,24 @@ builder.Services.AddMassTransit(x =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<BookingDbContext>();
+    try
+    {
+        int[] retryDelays = [1000, 2000, 5000];
+        for (var i = 0; i <= retryDelays.Length; i++)
+        {
+            try { await db.Database.MigrateAsync(); break; }
+            catch when (i < retryDelays.Length) { await Task.Delay(retryDelays[i]); }
+        }
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Migration failed. Starting without applying migrations.");
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {

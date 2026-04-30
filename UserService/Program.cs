@@ -122,7 +122,7 @@ builder.Services.AddMassTransit(opts =>
 {
     opts.UsingRabbitMq((context, config) =>
     {
-        config.Host("localhost", "/", h =>
+        config.Host(builder.Configuration["RabbitMQ:Host"] ?? "localhost", "/", h =>
         {
             h.Username("guest");
             h.Password("guest");
@@ -135,8 +135,30 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var seeder = scope.ServiceProvider.GetRequiredService<StartupSeeder>();
-    await seeder.SeedAsync();
+    var db = scope.ServiceProvider.GetRequiredService<UserDbContext>();
+    try
+    {
+        int[] retryDelays = [1000, 2000, 5000];
+        for (var i = 0; i <= retryDelays.Length; i++)
+        {
+            try { await db.Database.MigrateAsync(); break; }
+            catch when (i < retryDelays.Length) { await Task.Delay(retryDelays[i]); }
+        }
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Migration failed. Starting without applying migrations.");
+    }
+
+    try
+    {
+        var seeder = scope.ServiceProvider.GetRequiredService<StartupSeeder>();
+        await seeder.SeedAsync();
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Seeding failed.");
+    }
 }
 
 // Configure the HTTP request pipeline.

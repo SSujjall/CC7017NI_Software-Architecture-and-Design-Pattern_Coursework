@@ -13,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region Email Config binding
-var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfig>() ?? new EmailConfig();
 builder.Services.AddSingleton(emailConfig);
 #endregion
 
@@ -23,7 +23,7 @@ builder.Services.AddMassTransit(opts =>
     opts.AddConsumer<UserRegisteredConsumer>();
     opts.UsingRabbitMq((context, config) =>
     {
-        config.Host("localhost", "/", h =>
+        config.Host(builder.Configuration["RabbitMQ:Host"] ?? "localhost", "/", h =>
         {
             h.Username("guest");
             h.Password("guest");

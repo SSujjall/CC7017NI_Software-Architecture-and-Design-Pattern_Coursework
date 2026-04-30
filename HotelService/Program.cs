@@ -130,6 +130,24 @@ builder.Services.AddAuthentication(opts =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
+    try
+    {
+        int[] retryDelays = [1000, 2000, 5000];
+        for (var i = 0; i <= retryDelays.Length; i++)
+        {
+            try { await db.Database.MigrateAsync(); break; }
+            catch when (i < retryDelays.Length) { await Task.Delay(retryDelays[i]); }
+        }
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Migration failed. Starting without applying migrations.");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -1,0 +1,324 @@
+{
+  "info": {
+    "name": "Hotel Booking API",
+    "_postman_id": "hotel-booking-api",
+    "description": "API Gateway collection for the Hotel Booking microservices system. Set {{baseUrl}} to http://localhost:5050 and {{token}} to the JWT from login.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5050",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.data && json.data.jwtToken) {",
+                  "  pm.collectionVariables.set('token', json.data.jwtToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Confirm Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/auth/confirm-email?email=user@example.com&token=<token-from-register-response>",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "auth", "confirm-email"],
+              "query": [
+                { "key": "email", "value": "user@example.com" },
+                { "key": "token", "value": "<token-from-register-response>" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Superadmin ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/user/superadmin-id",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "user", "superadmin-id"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hotel",
+      "item": [
+        {
+          "name": "Get All Hotels",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/hotel/get-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "hotel", "get-all"]
+            }
+          }
+        },
+        {
+          "name": "Get Hotel By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/hotel/get-by-id/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "hotel", "get-by-id", "1"]
+            }
+          }
+        },
+        {
+          "name": "Add Hotel (Superadmin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/hotel/add-hotel",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "hotel", "add-hotel"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Grand Hotel\",\n  \"location\": \"Kathmandu, Nepal\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Room",
+      "item": [
+        {
+          "name": "Get Room By Hotel And Room ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/room/get-by-hotel-room/1/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "room", "get-by-hotel-room", "1", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Room (Superadmin/Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/room/create-room",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "room", "create-room"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hotelId\": 1,\n  \"roomId\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Booking",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/booking/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "booking", "create"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hotelId\": 1,\n  \"roomId\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wallet",
+      "item": [
+        {
+          "name": "Get All Wallets (Superadmin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/wallet/get-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "wallet", "get-all"]
+            }
+          }
+        },
+        {
+          "name": "Get Wallet By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/wallet/get-by-id/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "wallet", "get-by-id", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Wallet (Superadmin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/wallet/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "wallet", "create"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"<user-id>\",\n  \"balance\": 0.0\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Load Money",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/wallet/load-money",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "wallet", "load-money"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"balance\": 100.00\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Email",
+      "item": [
+        {
+          "name": "Send Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gateway/email/send-email",
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway", "email", "send-email"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"recipient@example.com\",\n  \"subject\": \"Test Email\",\n  \"content\": \"Hello from the Hotel Booking system.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+services:
+
+  # ── Infrastructure ──────────────────────────────────────────────
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "TestUser@123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"   # Management UI at http://localhost:15672
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  # ── Services ────────────────────────────────────────────────────
+  apigateway:
+    build:
+      context: .
+      dockerfile: ApiGateway/Dockerfile
+    ports:
+      - "5050:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    depends_on:
+      - hotel-service
+      - booking-service
+      - user-service
+      - wallet-service
+      - email-service
+    networks:
+      - app-network
+
+  hotel-service:
+    build:
+      context: .
+      dockerfile: HotelService/Dockerfile
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__HotelDB=Server=sqlserver,1433;Database=HotelDB;User Id=sa;Password=TestUser@123;TrustServerCertificate=True
+      - ConnectionStrings__Redis=redis:6379
+      - JWT__ValidAudience=http://localhost:5000/
+      - JWT__ValidIssuer=http://user-service:8080/
+      - JWT__Secret=ByYM000OLlMQG6VV8uyr57Xzyr7gHuw1qvUC5dcGt3SNM
+    depends_on:
+      - sqlserver
+      - redis
+    networks:
+      - app-network
+
+  booking-service:
+    build:
+      context: .
+      dockerfile: BookingService/Dockerfile
+    ports:
+      - "5002:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__BookingDB=Server=sqlserver,1433;Database=BookingDB;User Id=sa;Password=TestUser@123;TrustServerCertificate=True
+      - ConnectionStrings__Redis=redis:6379
+      - JWT__ValidAudience=http://localhost:5000/
+      - JWT__ValidIssuer=http://user-service:8080/
+      - JWT__Secret=ByYM000OLlMQG6VV8uyr57Xzyr7gHuw1qvUC5dcGt3SNM
+      - RabbitMQ__Host=rabbitmq
+    depends_on:
+      - sqlserver
+      - rabbitmq
+      - redis
+    networks:
+      - app-network
+
+  user-service:
+    build:
+      context: .
+      dockerfile: UserService/Dockerfile
+    ports:
+      - "5003:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__UserDB=Server=sqlserver,1433;Database=UserDB;User Id=sa;Password=TestUser@123;TrustServerCertificate=True
+      - JWT__ValidAudience=http://localhost:5000/
+      - JWT__ValidIssuer=http://user-service:8080/
+      - JWT__Secret=ByYM000OLlMQG6VV8uyr57Xzyr7gHuw1qvUC5dcGt3SNM
+      - RabbitMQ__Host=rabbitmq
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - app-network
+
+  wallet-service:
+    build:
+      context: .
+      dockerfile: WalletService/Dockerfile
+    ports:
+      - "5004:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__WalletDB=Server=sqlserver,1433;Database=WalletDB;User Id=sa;Password=TestUser@123;TrustServerCertificate=True
+      - JWT__ValidAudience=http://localhost:5000/
+      - JWT__ValidIssuer=http://user-service:8080/
+      - JWT__Secret=ByYM000OLlMQG6VV8uyr57Xzyr7gHuw1qvUC5dcGt3SNM
+      - RabbitMQ__Host=rabbitmq
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - app-network
+
+  email-service:
+    build:
+      context: .
+      dockerfile: EmailService/Dockerfile
+    ports:
+      - "5005:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ__Host=rabbitmq
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,63 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5050"
+  },
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/booking/{everything}",
+      "UpstreamPathTemplate": "/gateway/booking/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamHostAndPorts": [
+        { "Host": "booking-service", "Port": 8080 }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/hotel/{everything}",
+      "UpstreamPathTemplate": "/gateway/hotel/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamHostAndPorts": [
+        { "Host": "hotel-service", "Port": 8080 }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/room/{everything}",
+      "UpstreamPathTemplate": "/gateway/room/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamHostAndPorts": [
+        { "Host": "hotel-service", "Port": 8080 }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/user/{everything}",
+      "UpstreamPathTemplate": "/gateway/user/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamHostAndPorts": [
+        { "Host": "user-service", "Port": 8080 }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "UpstreamPathTemplate": "/gateway/auth/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamHostAndPorts": [
+        { "Host": "user-service", "Port": 8080 }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/wallet/{everything}",
+      "UpstreamPathTemplate": "/gateway/wallet/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamHostAndPorts": [
+        { "Host": "wallet-service", "Port": 8080 }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/email/{everything}",
+      "UpstreamPathTemplate": "/gateway/email/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamHostAndPorts": [
+        { "Host": "email-service", "Port": 8080 }
+      ]
+    }
+  ]
+}
