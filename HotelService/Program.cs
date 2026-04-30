@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using BuildingBlocks.Cache;
 using BuildingBlocks.Models;
 using HotelService.Data;
 using HotelService.Repositories;
@@ -52,6 +53,13 @@ builder.Services.AddDbContext<HotelDbContext>(opts =>
 {
     opts.UseSqlServer(builder.Configuration.GetConnectionString("HotelDB"));
 });
+#endregion
+
+#region Redis Cache
+builder.Services.AddStackExchangeRedisCache(opts =>
+    opts.Configuration = builder.Configuration.GetConnectionString("Redis")
+);
+builder.Services.AddSingleton<ICacheService, RedisCacheService>();
 #endregion
 
 #region Register Services

@@ -2,6 +2,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using BookingService.Consumers;
+using BuildingBlocks.Cache;
 using BookingService.Data;
 using BookingService.Repositories;
 using BookingService.Repositories.Interfaces;
@@ -46,6 +47,12 @@ builder.Services.AddDbContext<BookingDbContext>(opts =>
 {
     opts.UseSqlServer(builder.Configuration.GetConnectionString("BookingDB"));
 });
+#endregion
+
+#region Redis Cache
+builder.Services.AddStackExchangeRedisCache(opts =>
+    opts.Configuration = builder.Configuration.GetConnectionString("Redis"));
+builder.Services.AddSingleton<ICacheService, RedisCacheService>();
 #endregion
 
 #region Register Services

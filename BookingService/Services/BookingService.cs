@@ -3,6 +3,7 @@ using BookingService.Models;
 using BookingService.Models.DTOs;
 using BookingService.Repositories.Interfaces;
 using BookingService.Services.Interfaces;
+using BuildingBlocks.Cache;
 using BuildingBlocks.Events;
 using BuildingBlocks.Models;
 using BuildingBlocks.Models.Enums;
@@ -15,7 +16,8 @@ public class BookingService(
     IBookingRepository _bookingRepo,
     IPublishEndpoint _publishEndpoint,
     IHttpClientFactory _httpClientFactory,
-    IHttpContextAccessor _httpContextAccessor
+    IHttpContextAccessor _httpContextAccessor,
+    ICacheService _cache
 ) : IBookingService
 {
     public async Task<ApiResponse<Bookings>> CreateBooking(string userId, CreateBookingDTO dto)
@@ -109,6 +111,10 @@ public class BookingService(
 
     private async Task<string?> GetSuperAdminId()
     {
+        const string cacheKey = "users:superadmin-id";
+        var cached = await _cache.GetAsync<string>(cacheKey);
+        if (cached != null) return cached;
+
         var client = _httpClientFactory.CreateClient("UserService");
         ForwardAuthHeader(client);
 
@@ -116,6 +122,9 @@ public class BookingService(
         if (!response.IsSuccessStatusCode) return null;
 
         var result = await response.Content.ReadFromJsonAsync<ApiResponse<string>>();
+        if (result?.Data != null)
+            await _cache.SetAsync(cacheKey, result.Data, TimeSpan.FromHours(1));
+
         return result?.Data;
     }
 

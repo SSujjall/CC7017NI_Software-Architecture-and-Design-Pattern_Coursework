@@ -19,7 +19,8 @@ public class WalletService(
 
     public async Task<ApiResponse<Wallets>> GetWalletById(string userId, int walletId)
     {
-        var wallet = await _walletRepo.FindSingleByConditionAsync(x => x.Id == walletId && x.UserId == userId
+        var wallet = await _walletRepo.FindSingleByConditionAsync(
+            x => x.Id == walletId && x.UserId == userId
         );
         if (wallet == null)
         {
