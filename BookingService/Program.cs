@@ -125,10 +125,10 @@ static IAsyncPolicy<HttpResponseMessage> GetFallbackPolicy()
 {
     return Policy<HttpResponseMessage>
         .Handle<HttpRequestException>()
-        .OrResult(r => !r.IsSuccessStatusCode)
+        .Or<Polly.CircuitBreaker.BrokenCircuitException>()
         .FallbackAsync(async (ct) => new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)
         {
-            Content = new StringContent("Hotel service unavailable")
+            Content = new StringContent("Service unavailable")
         });
 }
 #endregion

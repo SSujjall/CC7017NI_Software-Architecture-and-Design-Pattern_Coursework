@@ -30,6 +30,17 @@ public class WalletService(
         return ApiResponse<Wallets>.Success(wallet, "Wallets fetched");
     }
 
+    public async Task<ApiResponse<Wallets>> GetUserWallet(string userId)
+    {
+        var userWallet = await _walletRepo.FindSingleByConditionAsync(x => x.UserId == userId);
+        if (userWallet == null)
+        {
+            return ApiResponse<Wallets>.Success(null, "No wallet found for user", HttpStatusCode.NoContent);
+        }
+
+        return ApiResponse<Wallets>.Success(userWallet, "User's Wallet fetched");
+    }
+
     public async Task<ApiResponse<Wallets>> CreateWallet(CreateWalletDTO dto)
     {
         var walletModel = new Wallets

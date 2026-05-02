@@ -11,6 +11,6 @@ public class Hotels
     public string Location { get; set; }
     
     // Navigation property
-    [JsonIgnore]
+    // [JsonIgnore]
     public List<Rooms> Rooms { get; set; }
 }

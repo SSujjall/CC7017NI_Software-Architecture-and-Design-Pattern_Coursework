@@ -30,6 +30,15 @@ namespace WalletService.Controllers
             return Ok(result);
         }
 
+        [Authorize]
+        [HttpGet("get-user-wallet")]
+        public async Task<IActionResult> GetUserWallet()
+        {
+            var userId = GetUserId();
+            var result = await _walletService.GetUserWallet(userId);
+            return Ok(result);
+        }
+
         [Authorize(Roles = "Superadmin")]
         [HttpPost("create")]
         public async Task<IActionResult> CreateWallet(CreateWalletDTO dto)

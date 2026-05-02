@@ -12,6 +12,14 @@ namespace HotelService.Controllers
     ) : ControllerBase
     {
         [Authorize]
+        [HttpGet("get-all-rooms/{hotelId}")]
+        public async Task<IActionResult> GetAllRooms(int hotelId)
+        {
+            var result = await _roomService.GetAllRoomsOfHotel(hotelId);
+            return Ok(result);
+        }
+        
+        [Authorize]
         [HttpGet("get-by-hotel-room/{hotelId}/{roomId}")]
         public async Task<IActionResult> GetRoomByHotelAndId(int hotelId, int roomId)
         {
