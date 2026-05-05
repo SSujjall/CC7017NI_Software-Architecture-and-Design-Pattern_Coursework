@@ -65,11 +65,65 @@ public class BookingService(
             BookingId = createdBooking.Id,
             UserId = userId,
             Amount = existingRoom.Price,
-            OwnerUserId = superAdminUserId
+            OwnerUserId = superAdminUserId,
+            HotelId = dto.HotelId,
+            RoomId = dto.RoomId
         });
 
         return ApiResponse<Bookings>.Success(createdBooking, "Booking created, awaiting payment", HttpStatusCode.Created);
     }
+
+    public async Task<ApiResponse<IEnumerable<Bookings>>> GetUserBookings(string userId)
+    {
+        var bookings = await _bookingRepo.FindAllByConditionAsync(
+            x => x.UserId == userId
+        );
+        if (!bookings.Any())
+        {
+            return ApiResponse<IEnumerable<Bookings>>.Success(null, "No bookings yet for this user", HttpStatusCode.NoContent);
+        }
+        return ApiResponse<IEnumerable<Bookings>>.Success(bookings, "Bookings Listed");
+    }
+
+    public async Task<ApiResponse<IEnumerable<Bookings>>> GetAllBookings()
+    {
+        var bookings = await _bookingRepo.GetAllAsync();
+        if (!bookings.Any())
+        {
+            return ApiResponse<IEnumerable<Bookings>>.Success(null, "No bookings yet for this user", HttpStatusCode.NoContent);
+        }
+        return ApiResponse<IEnumerable<Bookings>>.Success(bookings, "Bookings Listed");
+    }
+
+    public async Task<ApiResponse<Bookings>> ClearBooking(ClearBookingDTO dto)
+    {
+        var booking = await _bookingRepo.FindSingleByConditionAsync(
+            x => 
+                x.HotelId == dto.HotelId && x.RoomId == dto.RoomId &&
+                (x.Status == BookingStatus.Pending || x.Status == BookingStatus.Confirmed)
+        );
+        if (booking == null)
+        {
+            return ApiResponse<Bookings>.Failed(
+                new Dictionary<string, string> { { "Booking", "Booking not found" } },
+                "Booking clearing failed",
+                HttpStatusCode.NotFound
+            );
+        }
+
+        booking.Status = BookingStatus.CompletedAndReturned;
+        await _bookingRepo.UpdateAsync(booking);
+        await _bookingRepo.SaveChangesAsync();
+
+        await _publishEndpoint.Publish(new BookingClearEvent
+        {
+            HotelId = dto.HotelId,
+            RoomId = dto.RoomId
+        });
+
+        return ApiResponse<Bookings>.Success(booking, "Booking cleared");
+    }
+
 
     #region Helper private methods
     private async Task<ExistingRoomDTO> GetExistingRooms(int hotelId, int roomId)

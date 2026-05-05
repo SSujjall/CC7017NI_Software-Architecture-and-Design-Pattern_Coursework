@@ -3,11 +3,13 @@ using System.Text;
 using System.Text.Json;
 using BuildingBlocks.Cache;
 using BuildingBlocks.Models;
+using HotelService.Consumers;
 using HotelService.Data;
 using HotelService.Repositories;
 using HotelService.Repositories.Interfaces;
 using HotelService.Services;
 using HotelService.Services.Interfaces;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -67,6 +69,29 @@ builder.Services.AddScoped<IHotelService, HotelService.Services.HotelService>();
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+#endregion
+
+#region RabbitMQ Config
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<BookingCreatedConsumer>();
+    x.AddConsumer<BookingClearConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(builder.Configuration["RabbitMQ:Host"] ?? "localhost", "/", h => { });
+
+        cfg.ReceiveEndpoint("hotel-booking-created-queue", e =>
+        {
+            e.ConfigureConsumer<BookingCreatedConsumer>(context);
+        });
+
+        cfg.ReceiveEndpoint("hotel-booking-clear-queue", e =>
+        {
+            e.ConfigureConsumer<BookingClearConsumer>(context);
+        });
+    });
+});
 #endregion
 
 builder.Services.AddAuthorization();
