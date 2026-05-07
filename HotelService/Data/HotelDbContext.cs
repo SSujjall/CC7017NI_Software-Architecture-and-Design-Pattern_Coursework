@@ -24,8 +24,8 @@ public class HotelDbContext : DbContext
         );
 
         modelBuilder.Entity<Rooms>().HasData(
-            new Rooms { Id = 1, HotelId = 1, RoomNumber = "101", Price = 1000 },
-            new Rooms { Id = 2, HotelId = 1, RoomNumber = "102", Price = 1500 }
+            new Rooms { Id = 1, HotelId = 1, RoomNumber = "101", Price = 1000, IsAvailable = true },
+            new Rooms { Id = 2, HotelId = 1, RoomNumber = "102", Price = 1500, IsAvailable = true }
         );
     }
 

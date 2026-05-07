@@ -58,8 +58,8 @@ namespace HotelService.Migrations
                 columns: new[] { "Id", "HotelId", "IsAvailable", "Price", "RoomNumber" },
                 values: new object[,]
                 {
-                    { 1, 1, false, 1000m, "101" },
-                    { 2, 1, false, 1500m, "102" }
+                    { 1, 1, true, 1000m, "101" },
+                    { 2, 1, true, 1500m, "102" }
                 });
 
             migrationBuilder.CreateIndex(

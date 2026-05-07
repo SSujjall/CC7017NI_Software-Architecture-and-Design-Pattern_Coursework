@@ -82,7 +82,7 @@ namespace HotelService.Migrations
                         {
                             Id = 1,
                             HotelId = 1,
-                            IsAvailable = false,
+                            IsAvailable = true,
                             Price = 1000m,
                             RoomNumber = "101"
                         },
@@ -90,7 +90,7 @@ namespace HotelService.Migrations
                         {
                             Id = 2,
                             HotelId = 1,
-                            IsAvailable = false,
+                            IsAvailable = true,
                             Price = 1500m,
                             RoomNumber = "102"
                         });
