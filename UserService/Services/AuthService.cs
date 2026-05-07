@@ -18,7 +18,8 @@ public class AuthService(
     UserManager<Users> _userMgr,
     IUserRepository _userRepo,
     ITokenService _tokenService,
-    IPublishEndpoint _publishEndpoint
+    IPublishEndpoint _publishEndpoint,
+    IConfiguration _config
 ) : IAuthService
 {
     public async Task<ApiResponse<RegisterResponseDTO>> Register(RegisterDTO dto)
@@ -61,7 +62,7 @@ public class AuthService(
             UserId = userModel.Id,
             Email = userModel.Email,
             Username = userModel.UserName,
-            EmailConfirmationLink = $"https://localhost:5000/gateway/auth/confirm-email?email={userModel.Email}&token={encodedToken}"
+            EmailConfirmationLink = $"{_config["GatewayBaseUrl"]}/gateway/auth/confirm-email?email={userModel.Email}&token={encodedToken}"
         });
         #endregion
 

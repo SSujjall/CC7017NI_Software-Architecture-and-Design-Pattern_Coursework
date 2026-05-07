@@ -10,7 +10,7 @@ public class Rooms
     public string RoomNumber { get; set; }
     public decimal Price { get; set; }
 
-    public bool IsAvailable { get; set; }
+    public bool IsAvailable { get; set; } = true;
 
     [ForeignKey(nameof(HotelId))]
     public Hotels Hotel { get; set; }

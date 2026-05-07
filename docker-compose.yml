@@ -97,6 +97,7 @@ services:
       - JWT__ValidIssuer=http://user-service:8080/
       - JWT__Secret=ByYM000OLlMQG6VV8uyr57Xzyr7gHuw1qvUC5dcGt3SNM
       - RabbitMQ__Host=rabbitmq
+      - GatewayBaseUrl=http://localhost:5050
     depends_on:
       - sqlserver
       - rabbitmq
