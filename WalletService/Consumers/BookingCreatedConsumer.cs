@@ -24,7 +24,7 @@ public class BookingCreatedConsumer(
         }
         else
         {
-            await _publishEndpoint.Publish(new PaymentFailedEvent { BookingId = msg.BookingId });
+            await _publishEndpoint.Publish(new PaymentFailedEvent { BookingId = msg.BookingId, HotelId = msg.HotelId, RoomId = msg.RoomId });
         }
     }
 }

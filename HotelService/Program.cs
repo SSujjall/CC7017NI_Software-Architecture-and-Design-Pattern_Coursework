@@ -76,6 +76,7 @@ builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<BookingCreatedConsumer>();
     x.AddConsumer<BookingClearConsumer>();
+    x.AddConsumer<PaymentResultConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -89,6 +90,11 @@ builder.Services.AddMassTransit(x =>
         cfg.ReceiveEndpoint("hotel-booking-clear-queue", e =>
         {
             e.ConfigureConsumer<BookingClearConsumer>(context);
+        });
+
+        cfg.ReceiveEndpoint("hotel-payment-failed-queue", e =>
+        {
+            e.ConfigureConsumer<PaymentResultConsumer>(context);
         });
     });
 });

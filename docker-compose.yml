@@ -57,8 +57,10 @@ services:
       - JWT__ValidAudience=http://localhost:5000/
       - JWT__ValidIssuer=http://user-service:8080/
       - JWT__Secret=ByYM000OLlMQG6VV8uyr57Xzyr7gHuw1qvUC5dcGt3SNM
+      - RabbitMQ__Host=rabbitmq
     depends_on:
       - sqlserver
+      - rabbitmq
       - redis
     networks:
       - app-network
@@ -77,6 +79,7 @@ services:
       - JWT__ValidIssuer=http://user-service:8080/
       - JWT__Secret=ByYM000OLlMQG6VV8uyr57Xzyr7gHuw1qvUC5dcGt3SNM
       - RabbitMQ__Host=rabbitmq
+      - GatewayBaseUrl=http://apigateway:8080
     depends_on:
       - sqlserver
       - rabbitmq
