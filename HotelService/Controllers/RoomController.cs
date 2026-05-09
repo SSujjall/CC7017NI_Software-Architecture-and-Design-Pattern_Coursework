@@ -27,7 +27,7 @@ namespace HotelService.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
         
-        [Authorize("Superadmin, Admin")]
+        [Authorize(Roles = "Superadmin, Admin")]
         [HttpPost("create-room")]
         public async Task<IActionResult> CreateRoomForHotel(CreateRoomDTO model)
         {

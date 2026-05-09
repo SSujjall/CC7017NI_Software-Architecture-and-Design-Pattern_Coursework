@@ -133,14 +133,16 @@ static IAsyncPolicy<HttpResponseMessage> GetFallbackPolicy()
 }
 #endregion
 
+var gatewayBaseUrl = builder.Configuration["GatewayBaseUrl"];
+
 builder.Services.AddHttpClient("RoomService",
-        client => { client.BaseAddress = new Uri("https://localhost:5000/gateway/room/"); })
+        client => { client.BaseAddress = new Uri($"{gatewayBaseUrl}/gateway/room/"); })
     .AddPolicyHandler(GetRetryPolicy())
     .AddPolicyHandler(GetCircuitBreakerPolicy())
     .AddPolicyHandler(GetFallbackPolicy());
 
 builder.Services.AddHttpClient("UserService",
-    client => { client.BaseAddress = new Uri("https://localhost:5000/gateway/user/"); });
+    client => { client.BaseAddress = new Uri($"{gatewayBaseUrl}/gateway/user/"); });
 
 builder.Services.AddHttpContextAccessor();
 
