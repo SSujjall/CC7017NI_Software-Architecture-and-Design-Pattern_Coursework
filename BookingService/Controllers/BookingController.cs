@@ -4,6 +4,7 @@ using BookingService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using StackExchange.Redis;
 using UserService.Helpers;
 
 namespace BookingService.Controllers
@@ -14,7 +15,7 @@ namespace BookingService.Controllers
         IBookingService _bookingService
     ) : ControllerBase
     {
-        [Authorize]
+        [Authorize(Roles = "User")]
         [HttpPost("create")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDTO dto)
         {
